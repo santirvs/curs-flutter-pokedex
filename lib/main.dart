@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/features/authentication/presentation/loading_screen.dart'; // ignore: unused_import
 import 'package:pokedex/features/home/presentation/home_screen.dart'; // ignore: unused_import
+import 'package:pokedex/myApp/authentication/presentation/my_loading_screen.dart';
 
 import 'exemples/day1/day1_hub_screen.dart'; // ignore: unused_import
 import 'exemples/day2/day2_hub_screen.dart'; // ignore: unused_import
@@ -18,7 +19,9 @@ class PokedexApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       // home: const Day4HubScreen(),
-      home: const LoadingScreen(),
+      //home: const LoadingScreen(),
+
+      home: const MyLoadingScreen(),
     );
   }
 }
