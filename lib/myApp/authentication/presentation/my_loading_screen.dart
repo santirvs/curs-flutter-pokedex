@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/features/admin/presentation/admin_screen.dart';
 import 'package:pokedex/myApp/home/presentation/my_home_screen.dart';
 
-import 'my_loading_screen_controller.dart';
-
 
 // Defineix uns estils amb el tipus de lletra
 /*
@@ -68,8 +66,7 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
 
   late final _intro = AnimationController(
     vsync: this,
-    // 10000 -> se pasa unos 5 segundos sin ver nada y no aparece el personaje, solo la bola
-    duration: const Duration(milliseconds: 3200),   
+    duration: const Duration(milliseconds: 5000),   
   );
 
 
@@ -110,7 +107,6 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
         (widget.readiness == null &&
             widget.minimumDisplayDuration <= Duration.zero);
 
-    //Si saltem l'animació, navega a la següent pantalla
     if (skipAnimation) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -140,9 +136,6 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
     _spin.stop();
     _bob.stop();
 
-    await Future<void>.delayed(
-      MyLoadingScreenController.outroPauseBeforeNavigate,
-    );
     if (!mounted) return;
 
     Navigator.of(context).pushReplacement(
@@ -183,7 +176,7 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
               
               
 
-              // ???
+              //Area de l'Splash
               
               SafeArea(
                 child: Stack(

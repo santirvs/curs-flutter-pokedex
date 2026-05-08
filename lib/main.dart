@@ -18,13 +18,14 @@ class PokedexApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-            theme: ThemeData(
-                fontFamily: 'CoC', // Configuración de la fuente global
-                useMaterial3: true,
-              ),
+      //Theme per CoC
+      theme: ThemeData(
+          fontFamily: 'CoC', // Configuración de la fuente global
+          useMaterial3: true,
+        ),
 
       // home: const Day4HubScreen(),
-      //home: const LoadingScreen(),
+      // home: const LoadingScreen(),
 
       home: const MyLoadingScreen(),
     );

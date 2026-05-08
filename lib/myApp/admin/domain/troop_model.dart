@@ -1,0 +1,80 @@
+enum MovementType { land, air }
+
+enum TroopType {
+  reinaArquera('Reina Arquera', 50, 1606, 456, 5, 'archer_queen.png', MovementType.land),
+  arquera('Arquera', 7, 48, 25, 3.5, 'arquera.png', MovementType.land),
+  barbaro('Bàrbar', 7, 160, 30, 0.4, 'barbaro.png', MovementType.land),
+  bruja('Bruixa', 4, 470, 165, 4, 'bruja.png', MovementType.land),
+  constructor('Constructor', 5, 0, 0, 0, 'constructor.png', MovementType.land),
+  dragon('Drac', 6, 3400, 270, 4.5, 'dragon.png', MovementType.air),
+  esbirro('Esbirro', 7, 90, 58, 1.3, 'esbirro.png', MovementType.air),
+  esqueleto('Trencamurs', 6, 72, 55, 0.5, 'esqueleto.png', MovementType.land),
+  gigante('Gegant', 7, 1300, 77, 1, 'gigante.png', MovementType.land),
+  globo('Globus', 7, 690, 198, 5, 'globo.png', MovementType.air),
+  golem('Golem', 6, 6600, 60, 1, 'golem.png', MovementType.land),
+  granCentinela('Gran Centinel·la', 20, 1275, 94, 7, 'gran_centinela.png', MovementType.air),
+  mago('Mag', 8, 210, 215, 3, 'mago.png', MovementType.land),
+  montapuercos('Hog rider', 7, 700, 140, 0.6, 'montapuercos.png', MovementType.land),
+  pekka('P.E.K.K.A.', 7, 5900, 540, 0.8, 'pekka.png', MovementType.land),
+  reyBarbaro('Rei Bàrbar', 48, 4611, 270, 1, 'rey_barbaro.png', MovementType.land),
+  valkiria('Valkiria', 5, 1300, 148, 0.5, 'valkiria.png', MovementType.land) ;
+
+  final String name;
+  final int level;
+  final int life;
+  final int damage;
+  final double range;
+  final String imageUrl;
+  final MovementType movement;
+
+  //Constructor constante
+  const TroopType(this.name, this.level, this.life, this.damage, this.range, this.imageUrl, this.movement);
+
+  //Métodos personalizados
+  String get imageFile => 'assets/images/MyApp/$imageUrl';
+
+}
+
+class Troop {
+  const Troop({
+    required this.id,
+    required this.name,
+    required this.level,
+    required this.life,
+    required this.damage,
+    required this.range,
+    required this.movement,
+    this.imageUrl,
+  });
+
+  factory Troop.fromJson(Map<String, dynamic> json) => Troop(
+        id: json['id'] as int,
+        name: json['name'] as String,
+        level: json['level'] as int,
+        life: json['life'] as int,
+        damage: json['damage'] as int,
+        range: json['range'] as double,
+        imageUrl: json['imageUrl'] as String?,
+        movement: json['movement'] as MovementType
+      );
+
+  final int id;
+  final String name;
+  final int level;
+  final int life;
+  final int damage;
+  final double range;
+  final String? imageUrl;
+  final MovementType movement;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'level': level,
+        'life': life,
+        'damage': damage,
+        'range': range,
+        'imageUrl': imageUrl,
+        'movement' : movement,
+      };
+}

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../features/admin/presentation/admin_screen.dart';
 import '../../map/presentation/my_map_screen.dart';
-import '../../../features/ranking/presentation/ranking_screen.dart';
+import '../../ranking/presentation/my_ranking_screen.dart';
+import '../../list/presentation/my_list.dart';
 
 class MyHomeScreen extends StatefulWidget {
   const MyHomeScreen({super.key});
@@ -13,12 +14,14 @@ class MyHomeScreen extends StatefulWidget {
 
 class _MyHomeScreenState extends State<MyHomeScreen> with WidgetsBindingObserver {
   static const List<Widget> _destinations = [
+    MyListScreen(),
     MyMapScreen(),
-    RankingScreen(),
+    MyRankingScreen(),
     AdminScreen(),
   ];
 
-  int _currentIndex = 2;
+  // Establir el current index a la pantalla que volem inicialment (0..3)
+  int _currentIndex = 3;
   bool _wasInBackground = false;
 
   @override
@@ -43,6 +46,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> with WidgetsBindingObserver
     }
   }
 
+  // Alerta que ens agraeix que tornem a l'aplicació
   void _showWelcomeBackDialog() {
     if (!mounted) return;
     showDialog<void>(
@@ -70,6 +74,11 @@ class _MyHomeScreenState extends State<MyHomeScreen> with WidgetsBindingObserver
           setState(() => _currentIndex = index);
         },
         destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.list_outlined),
+            selectedIcon: Icon(Icons.list),
+            label: 'Llista',
+          ),
           NavigationDestination(
             icon: Icon(Icons.map_outlined),
             selectedIcon: Icon(Icons.map),

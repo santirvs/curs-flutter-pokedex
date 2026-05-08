@@ -8,6 +8,8 @@
 ## 08/05
  - Personalització de l'Splash
  - Descàrrega d'icones i fonts de Clash of Clans
+ - Creació de la pantalla de llista
+ - Creació del model de dades Troop i TroopRepository que retorna una llista fixa de tropes
 
 
 
