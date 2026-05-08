@@ -35,6 +35,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/MyApp/
     
   fonts:
     - family: Lato
@@ -46,3 +47,10 @@ flutter:
     - family: PokemonGb
       fonts:
         - asset: fonts/PokemonGb-RAeo.ttf
+
+    - family: CoC
+      fonts:
+        - asset: fonts/Clash_Regular.otf
+        - asset: fonts/Clash_Bold.otf
+          weight: 700
+

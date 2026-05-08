@@ -1,3 +1,17 @@
+# MyApp - Curs de Flutter
+
+## 07/05
+ - Fork del repositori del dia 4.
+ - Genero la estructura de MyApp
+ - Adapto Splash i accedeixo a MyMapScreen
+
+## 08/05
+ - Personalització de l'Splash
+ - Descàrrega d'icones i fonts de Clash of Clans
+
+
+
+===============================================
 # Pokédex — Curs de Flutter
 
 Aplicació Pokédex desenvolupada al llarg del curs **"Desenvolupament d'Apps Multiplataforma amb Flutter"**.

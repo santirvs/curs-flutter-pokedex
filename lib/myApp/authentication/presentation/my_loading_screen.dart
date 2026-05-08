@@ -8,6 +8,9 @@ import 'package:pokedex/myApp/home/presentation/my_home_screen.dart';
 
 import 'my_loading_screen_controller.dart';
 
+
+// Defineix uns estils amb el tipus de lletra
+/*
 const _titleStyle = TextStyle(
   fontFamily: 'PokemonGb',
   fontSize: 13,
@@ -15,13 +18,30 @@ const _titleStyle = TextStyle(
   color: Color(0xFFE8EAF6),
   letterSpacing: 0.5,
 );
+
 const _tipStyle = TextStyle(
   fontFamily: 'PokemonGb',
   fontSize: 11,
   height: 1.35,
   color: Color(0xFFB0BEC5),
 );
+*/
 
+const _titleStyle = TextStyle(
+  fontFamily: 'CoC',
+  fontSize: 17,
+  height: 1.4,
+  color: Color(0xFFE8EAF6),
+  letterSpacing: 0.5,
+);
+const _tipStyle = TextStyle(
+  fontFamily: 'CoC',
+  fontSize: 11,
+  height: 1.35,
+  color: Color(0xFFB0BEC5),
+);
+
+// Decideix quina serà la propera pantalla:  "Home" en mòbil i restringida a "Admin" si estem en web
 Widget _defaultNextScreen(BuildContext context) =>
     kIsWeb ? const AdminScreen() : const MyHomeScreen();
 
@@ -45,30 +65,38 @@ class MyLoadingScreen extends StatefulWidget {
 
 class _MyLoadingScreenState extends State<MyLoadingScreen>
     with TickerProviderStateMixin {
-  final _logic = MyLoadingScreenController();
-  Timer? _tipTimer;
 
   late final _intro = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 3200),
+    // 10000 -> se pasa unos 5 segundos sin ver nada y no aparece el personaje, solo la bola
+    duration: const Duration(milliseconds: 3200),   
   );
+
+
   late final _spin = AnimationController(
     vsync: this,
-    duration: const Duration(seconds: 2),
-  )..repeat();
+    duration: const Duration(milliseconds: 3200),
+  );//..repeat();  //Trec el repeat per tal que el faci només una vegada
+
+
+  //Efecto "rebote"
   late final _bob = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 900),
+    duration: const Duration(milliseconds: 1500),
   )..repeat();
 
+  // backgroundReveal:: fa fade-in
   late final _bgReveal = CurvedAnimation(
     parent: _intro,
     curve: const Interval(0, 0.55, curve: Curves.easeOutCubic),
   );
+
   late final _uiReveal = CurvedAnimation(
     parent: _intro,
     curve: const Interval(0.38, 1, curve: Curves.easeOutCubic),
   );
+
+  late double opacityLogo = 0;
 
   @override
   void initState() {
@@ -77,9 +105,12 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
   }
 
   Future<void> _runSequence() async {
+    //Se salta l'animació si estem en una web o bé el temps d'animació és zero
     final skipAnimation = kIsWeb ||
         (widget.readiness == null &&
             widget.minimumDisplayDuration <= Duration.zero);
+
+    //Si saltem l'animació, navega a la següent pantalla
     if (skipAnimation) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -90,16 +121,15 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
       return;
     }
 
+    // Comencem a fer-los girar perque apareguin girant
+    _spin.forward(); // El gigante empieza a girar (una sóla vez al usar el forward y no el repeat)
+  
+    //Comença l'animació
     await _intro.forward();
     if (!mounted) return;
-    setState(_logic.enterLoop);
 
-    _tipTimer = Timer.periodic(MyLoadingScreenController.tipRotationInterval, (
-      _,
-    ) {
-      if (!mounted) return;
-      setState(_logic.advanceTip);
-    });
+    opacityLogo = 1;
+    _bob.repeat(reverse: true); // El gigante empieza a flotar arriba y abajo
 
     await Future.wait<void>([
       Future<void>.delayed(widget.minimumDisplayDuration),
@@ -107,11 +137,8 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
     ]);
     if (!mounted) return;
 
-    _tipTimer?.cancel();
-    _tipTimer = null;
     _spin.stop();
     _bob.stop();
-    setState(_logic.enterOutro);
 
     await Future<void>.delayed(
       MyLoadingScreenController.outroPauseBeforeNavigate,
@@ -125,7 +152,6 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
 
   @override
   void dispose() {
-    _tipTimer?.cancel();
     _intro.dispose();
     _spin.dispose();
     _bob.dispose();
@@ -144,12 +170,21 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
           return Stack(
             fit: StackFit.expand,
             children: [
+              //Posa un background 
               const _Background(),
+
+
+              //Posa una caixa blanca i la va fent transparent per crear un efecte d'aparició (fade-in)              
               Positioned.fill(
                 child: ColoredBox(
                   color: Colors.white.withValues(alpha: 1 - bg),
                 ),
               ),
+              
+              
+
+              // ???
+              
               SafeArea(
                 child: Stack(
                   fit: StackFit.expand,
@@ -158,7 +193,7 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
                       reveal: ui,
                       spin: _spin.value,
                       bob: _bob.value,
-                      tip: _logic.currentTip,
+                      tip: "Carregant els personatges...",
                     ),
                     Positioned(
                       left: 0,
@@ -166,16 +201,15 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
                       top: 80,
                       height: 300,
                       child: AnimatedOpacity(
-                        opacity: _logic.phase == LoadingPhase.intro ? 0 : 1,
+                        opacity: opacityLogo,
                         duration: const Duration(milliseconds: 320),
-                        child: _OakArt(
-                          outro: _logic.phase == LoadingPhase.outro,
-                        ),
+                        child: _MostrarLogo(),
                       ),
                     ),
                   ],
                 ),
               ),
+              
             ],
           );
         },
@@ -184,6 +218,11 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
   }
 }
 
+
+
+
+// Crea un caixa que fa de fons (background) 
+// amb un gradient que va del primer color (a dalt), passant pel segon color (al mig) i arribant al tercer color (a baix)
 class _Background extends StatelessWidget {
   const _Background();
 
@@ -193,27 +232,28 @@ class _Background extends StatelessWidget {
       gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [Color(0xFF283593), Color(0xFF0D1642), Color(0xFF070B1A)],
+        //colors: [Color(0xFF283593), Color(0xFF0D1642), Color(0xFF070B1A)],
+        colors: [Color(0xFFFFFFFF), Color(0xFF000000), Color(0xFFFF0000)],
       ),
     ),
     child: SizedBox.expand(),
   );
 }
 
-class _OakArt extends StatelessWidget {
-  const _OakArt({required this.outro});
-  final bool outro;
 
+
+
+// Mostra el logo
+class _MostrarLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
       child: AnimatedSwitcher(
-        duration: Duration(milliseconds: outro ? 780 : 420),
+        duration: Duration(milliseconds: 780),
         switchInCurve: Curves.easeOutCubic,
         switchOutCurve: Curves.easeInCubic,
         child: Image.asset(
-          outro ? 'assets/images/oak_2.webp' : 'assets/images/oak.png',
-          key: ValueKey<bool>(outro),
+          'assets/images/MyApp/clash_of_clans_logo.png',
           height: 240,
           fit: BoxFit.contain,
           alignment: Alignment.topCenter,
@@ -258,15 +298,15 @@ class _CenterBlock extends StatelessWidget {
                     child: Transform.rotate(
                       angle: spin * 2 * math.pi,
                       child: Image.asset(
-                        'assets/images/pokeball.png',
-                        width: 88,
-                        height: 88,
+                        'assets/images/MyApp/gigante.png',
+                        width: 150,
+                        height: 150,
                       ),
                     ),
                   ),
                   const SizedBox(height: 28),
                   const Text(
-                    'CARREGANT...',
+                    'Carregant Clash of Clans...',
                     style: _titleStyle,
                     textAlign: TextAlign.center,
                   ),
