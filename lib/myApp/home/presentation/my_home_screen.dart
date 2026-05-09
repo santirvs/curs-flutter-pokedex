@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../features/admin/presentation/admin_screen.dart';
+import '../../admin/presentation/admin_screen.dart';
 import '../../map/presentation/my_map_screen.dart';
 import '../../ranking/presentation/my_ranking_screen.dart';
 import '../../list/presentation/my_list.dart';
@@ -17,7 +17,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> with WidgetsBindingObserver
     MyListScreen(),
     MyMapScreen(),
     MyRankingScreen(),
-    AdminScreen(),
+    MyAdminScreen(),
   ];
 
   // Establir el current index a la pantalla que volem inicialment (0..3)

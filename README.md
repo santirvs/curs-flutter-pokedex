@@ -11,7 +11,10 @@
  - Creació de la pantalla de llista
  - Creació del model de dades Troop i TroopRepository que retorna una llista fixa de tropes
 
-
+## 09/05
+ - Personalització del form Admin
+ - Creat un enum de camps que facilitin la definició i validació
+ 
 
 ===============================================
 # Pokédex — Curs de Flutter
