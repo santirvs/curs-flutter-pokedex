@@ -13,8 +13,16 @@
 
 ## 09/05
  - Personalització del form Admin
- - Creat un enum de camps que facilitin la definició i validació
+ - Creat un enum de camps que facilitin la definició i validació dels camps que conté el formulari
+ - Canviat el DropdownButton per DropdownMenu per tal que s'ajusti a l'amplada del control
+ - Ampliació del Troop i TroopMovement per definir colors
+ - Canviat el contingut del Dropdown (ha donat error en carregar el Json i ha calgut desinstalar)
+ - Falta corregir el teclat numèric que surt en introduir el nom
  
+
+
+
+
 
 ===============================================
 # Pokédex — Curs de Flutter

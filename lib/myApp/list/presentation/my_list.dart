@@ -45,14 +45,8 @@ class TroopListView extends StatelessWidget {
       itemBuilder: (context, index) {
         final troop = troops[index];
 
-              // Definimos el color según el tipo de movimiento
-      final backgroundColor = troop.movement == MovementType.air 
-          ? Colors.lightBlue[50]  // Azul claro para aéreas
-          : Colors.orange[50];    // Naranja/Tierra para terrestres
-
-
         return Card(
-          color: backgroundColor,
+          color: troop.movement.color,
           elevation: 4,
           margin: const EdgeInsets.only(bottom: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

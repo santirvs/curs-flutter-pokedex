@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../widgets/cards/pokemon_card.dart';
-import '../../../features/admin/domain/pokemon_model.dart';
+import '../../widgets/cards/pokemon_card.dart';
+
 import 'admin_screen_controller.dart';
+import '../domain/troop_model.dart';  // ignore: unused_import
+import '../domain/pokemon_model.dart';
 
 class MyAdminScreen extends StatefulWidget {
   const MyAdminScreen({super.key});
@@ -19,7 +21,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _formData = <String, String>{};
-  PokemonType? _selectedType;
+  TroopMovementType? _selectedType;
   XFile? _pickedImage;
   Uint8List? _pickedImageBytes;
   String? _imageError;
@@ -109,7 +111,8 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
     );
   }
 
-  Widget _buildStatField({
+  //Widget que mostra un camp de text amb validació
+  Widget _buildField({
     required String key,
     required String label,
     required String hint,
@@ -121,6 +124,10 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
+        hintStyle: const TextStyle(
+          color: Colors.grey, // O Colors.black38 para un gris suave
+          fontSize: 14,
+        ),
         border: const OutlineInputBorder(),
       ),
       validator: validator,
@@ -128,9 +135,35 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
     );
   }
 
-  //Estableix el punt d'amplada on passem de portrait a landscape 
+  //Widged que deixa un espai de separació entre dos camps del formulari, per defecte 12
+  Widget _buildSpacerBetweenFields( {double space = 12}) {
+    return SizedBox(height: space);
+  }
+
+  //Widged que mostra 
+  Widget _buildDropdownMenuTipus() {
+    return DropdownMenu<TroopMovementType>(
+      // Para que ocupe todo el ancho disponible como un FormField
+      expandedInsets: EdgeInsets.zero,
+      initialSelection: _selectedType,
+      label: const Text('Tipus'),
+      hintText: 'Selecciona un tipus',
+      dropdownMenuEntries: TroopMovementType.values.map((t) {
+        return DropdownMenuEntry<TroopMovementType>(value: t, label: t.label);
+      }).toList(),
+      onSelected: (value) => setState(() => _selectedType = value),
+      // Personalización del estilo para que parezca un OutlinedBorder
+      inputDecorationTheme: const InputDecorationTheme(
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12),
+      ),
+    );
+  }
+
+  //Estableix el punt d'amplada on passem de portrait a landscape
   static const _wideBreakpoint = 720.0;
 
+  //Construcció del formulari
   Widget _buildForm(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -142,67 +175,56 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  labelText: 'ID',
-                  hintText: 'Ex. 25',
-                  border: OutlineInputBorder(),
-                ),
+              // *** ID ***
+              _buildField(
+                key: FieldsInForm.id.key,
+                label: FieldsInForm.id.label,
+                hint: _controller.getHintId(),
                 validator: _controller.validateId,
-                onSaved: (value) => _formData['id'] = value ?? '',
               ),
-              const SizedBox(height: 12),
-              TextFormField(
-                textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(
-                  labelText: 'Nom',
-                  hintText: 'PEPE',
-                  border: OutlineInputBorder(),
-                ),
+              _buildSpacerBetweenFields(),
+              // *** NOM ***
+              _buildField(
+                key: FieldsInForm.name.key,
+                label: FieldsInForm.name.label,
+                hint: _controller.getHintName(),
                 validator: _controller.validateName,
-                onSaved: (value) => _formData['name'] = value ?? '',
               ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<PokemonType>(
-                initialValue: _selectedType,
-                decoration: const InputDecoration(
-                  labelText: 'Tipus',
-                  border: OutlineInputBorder(),
-                ),
-                hint: const Text('Selecciona un tipus'),
-                items: [
-                  for (final t in PokemonType.values)
-                    DropdownMenuItem(value: t, child: Text(t.label)),
-                ],
-                onChanged: (value) => setState(() => _selectedType = value),
-                validator: _controller.validateType,
-              ),
-              const SizedBox(height: 12),
-              _buildStatField(
-                key: 'hp',
-                label: 'Vida',
+              _buildSpacerBetweenFields(space:40),
+              // *** TIPUS ***
+              _buildDropdownMenuTipus(),
+              _buildSpacerBetweenFields(space:40),
+
+              // *** VIDA ***
+              _buildField(
+                key: FieldsInForm.hp.key,
+                label: FieldsInForm.hp.label,
                 hint: _controller.getHintHp(),
                 validator: _controller.validateHp,
               ),
-              const SizedBox(height: 12),
-              _buildStatField(
-                key: 'attack',
-                label: 'Atac',
+              _buildSpacerBetweenFields(),
+
+              // *** ATAC ***
+              _buildField(
+                key: FieldsInForm.attack.key,
+                label: FieldsInForm.attack.label,
                 hint: _controller.getHintAttack(),
                 validator: _controller.validateAttack,
               ),
-              const SizedBox(height: 12),
-              _buildStatField(
-                key: 'defense',
-                label: 'Defensa',
+              _buildSpacerBetweenFields(),
+
+              // *** DEFENSA ***
+              _buildField(
+                key: FieldsInForm.defense.key,
+                label: FieldsInForm.defense.label,
                 hint: _controller.getHintDefense(),
                 validator: _controller.validateDefense,
               ),
-              const SizedBox(height: 16),
-              Text('Imatge *', style: theme.textTheme.titleSmall),
-              const SizedBox(height: 8),
+              _buildSpacerBetweenFields(),
+
+              // *** BOTONS D'IMATGE ***
+              Text(FieldsInForm.image.label, style: theme.textTheme.titleSmall),
+              _buildSpacerBetweenFields(),
               Row(
                 children: [
                   Expanded(
@@ -222,7 +244,9 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              _buildSpacerBetweenFields(),
+
+              // *** MOSTRA LA IMATGE TRIADA ***
               AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
                 height: _pickedImageBytes != null ? 180 : 100,
@@ -277,7 +301,9 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
                     ),
                   ),
                 ),
-              const SizedBox(height: 16),
+              _buildSpacerBetweenFields(),
+
+              // *** BOTÓ GUARDAR ***
               FilledButton.icon(
                 onPressed: _onSave,
                 icon: const Icon(Icons.save),
@@ -291,7 +317,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
   }
 
   Widget _buildPokemonList(ThemeData theme) {
-    final pokemons = _controller.pokemons;
+    final pokemons = _controller.tropa;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -317,6 +343,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
     );
   }
 
+  //Dibuixa la pantalla
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
