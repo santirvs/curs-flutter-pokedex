@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/myApp/list/data/troop_repository.dart';
-import 'package:pokedex/myApp/admin/domain/troop_model.dart';
 
 class MyListScreen extends StatelessWidget {
   const MyListScreen({super.key});
@@ -12,7 +11,7 @@ class MyListScreen extends StatelessWidget {
       // Barra superior con el título
       appBar: AppBar(
         title: const Text(
-          'Llista de tropes',
+          'Llista de tropes oficials',
           style: TextStyle(
             fontFamily: 'CoC', // Tu fuente personalizada
             fontSize: 22,
@@ -46,7 +45,7 @@ class TroopListView extends StatelessWidget {
         final troop = troops[index];
 
         return Card(
-          color: troop.movement.color,
+          color: troop.type.color,
           elevation: 4,
           margin: const EdgeInsets.only(bottom: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

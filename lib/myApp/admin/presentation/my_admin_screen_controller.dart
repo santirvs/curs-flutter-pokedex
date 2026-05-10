@@ -6,17 +6,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../myApp/admin/domain/pokemon_model.dart';
 import '../../../myApp/admin/domain/troop_model.dart';
 
-const _kAdminPokemons = 'admin_pokemons';
+const _kAdminTroops = 'admin_troops';
 
 //Definició dels camps que hi haurà al formulari
 enum FieldsInForm {
-  id ('Id', 'Id','Id', 0, 0, "Valor numèric únic identificador"),
-  name('name','Nom','String', 2, 50, "Ex: Balbusar"),
-  hp('hp','Vida', 'Int', 10, 35,""),
-  attack('attack','Atac','Int',111, 222,""),
-  defense('defense','Defensa', 'Int', 150, 250, ""),
-  image('image','Imatge', 'NotNull',0,0, "Tria una imatge"),
+  id ('id', 'Id','Id', 0, 0, "Valor numèric únic identificador"),
+  name('name','Nom','String', 2, 50, "Ex: Duc Drac"),
   itemType('type','Tipus','NotNull',0,0, "Tria un tipus"),
+  level('level','Nivell', 'Int', 1, 100,""),
+  life('life','Vida', 'Int', 1, 10000,""),
+  damage('damage','Atac','Int',1, 3000,""),
+  range('range','Rang','Double',0, 10,""),
+  image('image','Imatge', 'NotNull',0,0, "Tria una imatge"),
   ;
 
   final String key;
@@ -33,6 +34,7 @@ enum FieldsInForm {
   String get hint {
       switch (type) {
         case 'Int' :  return '$minValue .. $maxValue' ;
+        case 'Double' :  return '$minValue.0 .. $maxValue.0' ;
         case 'String' : return sampleHint;
         case 'Id' : return sampleHint;
         case 'NotNull' : return sampleHint;
@@ -45,30 +47,30 @@ enum FieldsInForm {
 
 class AdminScreenController {
   final _prefs = SharedPreferencesAsync();
-  final List<Pokemon> tropa = [];
+  final List<Troop> tropes = [];
 
-  Future<void> loadPokemons() async {
-    final raw = await _prefs.getStringList(_kAdminPokemons);
+  Future<void> loadTroops() async {
+    final raw = await _prefs.getStringList(_kAdminTroops);
     if (raw == null) return;
-    tropa
+    tropes
       ..clear()
-      ..addAll(raw.map((e) => Pokemon.fromJson(jsonDecode(e) as Map<String, dynamic>)));
+      ..addAll(raw.map((e) => Troop.fromJson(jsonDecode(e) as Map<String, dynamic>)));
   }
 
-  Future<void> addPokemon(Pokemon pokemon) async {
-    tropa.add(pokemon);
+  Future<void> addTroop(Troop troop) async {
+    tropes.add(troop);
     await _saveAll();
   }
 
   Future<void> _saveAll() async {
-    final encoded = tropa.map((p) => jsonEncode(p.toJson())).toList();
-    await _prefs.setStringList(_kAdminPokemons, encoded);
+    final encoded = tropes.map((p) => jsonEncode(p.toJson())).toList();
+    await _prefs.setStringList(_kAdminTroops, encoded);
   }
 
   Pokemon createPokemon({
     required String id,
     required String name,
-    required TroopMovementType type,
+    required TroopType type,
     required String hp,
     required String attack,
     required String defense,
@@ -89,6 +91,33 @@ class AdminScreenController {
     );
   }
 
+
+ Troop createTroop({
+    required String id,
+    required String name,
+    required TroopType type,
+    required String level,
+    required String life,
+    required String damage,
+    required String range,
+    required Uint8List imageBytes,
+    required String? mimeType,
+  }) {
+    final mime = mimeType ?? 'image/jpeg';
+    final imageUrl = 'data:$mime;base64,${base64Encode(imageBytes)}';
+
+    return Troop(
+      id: int.parse(id.trim()),
+      name: name.trim(),
+      type: type,
+      level: int.parse(level.trim()),
+      life: int.parse(life.trim()),
+      damage: int.parse(damage.trim()),
+      range: double.parse(range.trim()),
+      imageUrl: imageUrl,
+    );
+  }
+
  
   // Mètodes de validació dels camps del formulari.
   // Quedaria pendent incorporar-los a l'enum
@@ -97,21 +126,25 @@ class AdminScreenController {
 
   String? validateName(String? value) => _validateString(value, FieldsInForm.name);
   String getHintName() => FieldsInForm.name.hint;
+  
+  String? validateType(TroopType? value) => _validateNotNull(value != null, FieldsInForm.itemType);
+  String getHintTipus() => FieldsInForm.itemType.hint;
 
-  String? validateHp(String? value) => _validateInteger(value, FieldsInForm.hp);
-  String getHintHp() => FieldsInForm.hp.hint;
-
-  String? validateAttack(String? value) => _validateInteger(value, FieldsInForm.attack);
-  String getHintAttack() => FieldsInForm.attack.hint;
-
-  String? validateDefense(String? value) => _validateInteger(value, FieldsInForm.defense);
-  String getHintDefense() => FieldsInForm.defense.hint;
-
+  String? validateLevel(String? value) => _validateInteger(value, FieldsInForm.level);
+  String getHintLevel() => FieldsInForm.level.hint;
+  
+  String? validateLife(String? value) => _validateInteger(value, FieldsInForm.life);
+  String getHintLife() => FieldsInForm.life.hint;
+  
+  String? validateDamage(String? value) => _validateInteger(value, FieldsInForm.damage);
+  String getHintDamage() => FieldsInForm.damage.hint;
+  
+  String? validateRange(String? value) => _validateDouble(value, FieldsInForm.range);
+  String getHintRange() => FieldsInForm.range.hint;
+ 
   String? validateImage(bool hasImage) => _validateNotNull(hasImage, FieldsInForm.image);
   String getHintImatge() => FieldsInForm.image.hint;
 
-  String? validateType(PokemonType? value) => _validateNotNull(value != null, FieldsInForm.itemType);
-  String getHintTipus() => FieldsInForm.itemType.hint;
 
 
   //Mètodes de validació genèrica
@@ -129,6 +162,21 @@ class AdminScreenController {
     return null;
   }
 
+   //Mètodes de validació genèrica
+  String? _validateDouble(String? value, FieldsInForm fif) {
+    if (value == null || value.trim().isEmpty) {
+      return 'El ${fif.label} és obligatori';
+    }
+    final n = double.tryParse(value.trim());
+    if (n == null) {
+      return 'El ${fif.label} ha de ser un número decimal';
+    }
+    if (n < fif.minValue.toDouble() || n > fif.maxValue.toDouble()) {
+      return 'El valor de ${fif.label} ha d\'estar entre ${fif.minValue.toDouble()} i ${fif.maxValue.toDouble()}';
+    }
+    return null;
+  }
+
   String? _validateId(String? value, FieldsInForm fif) {
     if (value == null || value.trim().isEmpty) {
       return 'L\'${fif.label} és obligatori';
@@ -140,7 +188,7 @@ class AdminScreenController {
     if (id <= 0) {
       return 'L\'${fif.label} ha de ser més gran que 0';
     }
-    if (tropa.any((p) => p.id == id)) {
+    if (tropes.any((p) => p.id == id)) {
       return 'Ja existeix un element amb aquest ${fif.label}';
     }
     return null;

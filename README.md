@@ -16,9 +16,20 @@
  - Creat un enum de camps que facilitin la definició i validació dels camps que conté el formulari
  - Canviat el DropdownButton per DropdownMenu per tal que s'ajusti a l'amplada del control
  - Ampliació del Troop i TroopMovement per definir colors
- - Canviat el contingut del Dropdown (ha donat error en carregar el Json i ha calgut desinstalar)
- - Falta corregir el teclat numèric que surt en introduir el nom
+ - Canviat el contingut del Dropdown (ha donat error en carregar el Json i ha calgut desinstalar l'App per esborrar les SharedPreferences)
+ - *** Falta corregir el teclat numèric que surt en introduir el nom
+ - *** Falla al guardar, no dóna cap error, però no guarda res
  
+## 10/05
+ - Corregit que aparegui el teclat numéric només si es demanen números. S'ha afegit un paràmetre numericOnly al _buildField que assigni null en cas que no sigui numeric als atributs keyboardType e inputFormatters
+ - Corregit el guardar. Hi havia conflicte entre el camp buscat "id" i el configurat "Id"
+ - Creada una llibreria d'utilitats a widgets/utils/utils.dart per poder ser reaprofitades
+    - ShowCustomDialog()
+    - buildSpacer()
+    - buildField()
+ - Adaptat tota la Admin a la meva App
+ - *** FALTA ELIMINAR QUALSEVOL POKEMON DEL CODI
+ - *** FALTA PERMETRE NÚMEROS DECIMALS PEL RANG
 
 
 

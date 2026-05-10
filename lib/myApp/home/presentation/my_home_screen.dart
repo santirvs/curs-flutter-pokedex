@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/myApp/widgets/utils/utils.dart';
 
-import '../../admin/presentation/admin_screen.dart';
+import '../../admin/presentation/my_admin_screen.dart';
 import '../../map/presentation/my_map_screen.dart';
 import '../../ranking/presentation/my_ranking_screen.dart';
 import '../../list/presentation/my_list.dart';
@@ -49,20 +50,8 @@ class _MyHomeScreenState extends State<MyHomeScreen> with WidgetsBindingObserver
   // Alerta que ens agraeix que tornem a l'aplicació
   void _showWelcomeBackDialog() {
     if (!mounted) return;
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Benvingut de nou'),
-        content: const Text('Ens alegra tornar-te a veure.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('D\'acord'),
-          ),
-        ],
-      ),
-    );
-  }
+    showCustomDialog(context, 'Benvingut de nou', 'Ens alegra tornar-te a veure.');
+ }
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,7 @@ class TroopRepository {
   const TroopRepository();
 
   List<Troop> getTroops() {
-     return TroopType.values.map((type) {
+     return OfficialTroop.values.map((type) {
       return Troop(
         id: type.index, // Usa el índice del enum como ID único
         name: type.name,
@@ -13,7 +13,7 @@ class TroopRepository {
         damage: type.damage,
         range: type.range,
         imageUrl: type.imageFile,
-        movement: type.movement // Usa el getter que ya se ha creado en el enum
+        type: type.movement // Usa el getter que ya se ha creado en el enum
       );
     }).toList();
   }

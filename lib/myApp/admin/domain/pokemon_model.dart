@@ -39,7 +39,7 @@ class Pokemon {
   factory Pokemon.fromJson(Map<String, dynamic> json) => Pokemon(
         id: json['id'] as int,
         name: json['name'] as String,
-        type: TroopMovementType.values.byName(json['type'] as String),
+        type: TroopType.values.byName(json['type'] as String),
         hp: json['hp'] as int,
         attack: json['attack'] as int,
         defense: json['defense'] as int,
@@ -48,7 +48,7 @@ class Pokemon {
 
   final int id;
   final String name;
-  final TroopMovementType type;
+  final TroopType type;
   final int hp;
   final int attack;
   final int defense;

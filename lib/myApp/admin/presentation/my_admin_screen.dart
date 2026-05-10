@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../widgets/cards/pokemon_card.dart';
+import '../../widgets/utils/utils.dart';
+import '../../widgets/cards/troop_card.dart';
 
-import 'admin_screen_controller.dart';
-import '../domain/troop_model.dart';  // ignore: unused_import
-import '../domain/pokemon_model.dart';
+import 'my_admin_screen_controller.dart';
+import '../domain/troop_model.dart';
 
 class MyAdminScreen extends StatefulWidget {
   const MyAdminScreen({super.key});
@@ -21,7 +21,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _formData = <String, String>{};
-  TroopMovementType? _selectedType;
+  TroopType? _selectedType;
   XFile? _pickedImage;
   Uint8List? _pickedImageBytes;
   String? _imageError;
@@ -33,7 +33,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
   }
 
   Future<void> _loadPokemons() async {
-    await _controller.loadPokemons();
+    await _controller.loadTroops();
     if (!mounted) return;
     setState(() {});
   }
@@ -52,6 +52,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
     });
   }
 
+  // Guardar el personatge
   Future<void> _onSave() async {
     final form = _formKey.currentState!;
     final formValid = form.validate();
@@ -63,21 +64,22 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
 
     form.save();
 
-    final pokemon = _controller.createPokemon(
+    final troop = _controller.createTroop(
       id: _formData['id']!,
       name: _formData['name']!,
       type: _selectedType!,
-      hp: _formData['hp']!,
-      attack: _formData['attack']!,
-      defense: _formData['defense']!,
+      level: _formData['level']!,
+      life: _formData['life']!,
+      damage: _formData['damage']!,
+      range: _formData['range']!,
       imageBytes: _pickedImageBytes!,
       mimeType: _pickedImage!.mimeType,
     );
 
-    await _controller.addPokemon(pokemon);
+    await _controller.addTroop(troop);
     if (!mounted) return;
     setState(() {});
-    _showSavedDialog(pokemon);
+    showCustomDialog(context, 'Tropa guardada', 'La tropa ${troop.name} s\'ha guardat correctament');
     _resetForm();
   }
 
@@ -92,64 +94,19 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
     });
   }
 
-  //Mostra el missatge de guardat correctament
-  void _showSavedDialog(Pokemon pokemon) {
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Pokémon guardat'),
-        content: Text(
-          'El Pokémon "${pokemon.name}" s\'ha guardat correctament.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('D\'acord'),
-          ),
-        ],
-      ),
-    );
-  }
 
-  //Widget que mostra un camp de text amb validació
-  Widget _buildField({
-    required String key,
-    required String label,
-    required String hint,
-    required String? Function(String?) validator,
-  }) {
-    return TextFormField(
-      keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        hintStyle: const TextStyle(
-          color: Colors.grey, // O Colors.black38 para un gris suave
-          fontSize: 14,
-        ),
-        border: const OutlineInputBorder(),
-      ),
-      validator: validator,
-      onSaved: (value) => _formData[key] = value ?? '',
-    );
-  }
+ 
 
-  //Widged que deixa un espai de separació entre dos camps del formulari, per defecte 12
-  Widget _buildSpacerBetweenFields( {double space = 12}) {
-    return SizedBox(height: space);
-  }
-
-  //Widged que mostra 
+  //Widged que mostra el dropdown de tipus
   Widget _buildDropdownMenuTipus() {
-    return DropdownMenu<TroopMovementType>(
+    return DropdownMenu<TroopType>(
       // Para que ocupe todo el ancho disponible como un FormField
       expandedInsets: EdgeInsets.zero,
       initialSelection: _selectedType,
       label: const Text('Tipus'),
       hintText: 'Selecciona un tipus',
-      dropdownMenuEntries: TroopMovementType.values.map((t) {
-        return DropdownMenuEntry<TroopMovementType>(value: t, label: t.label);
+      dropdownMenuEntries: TroopType.values.map((t) {
+        return DropdownMenuEntry<TroopType>(value: t, label: t.label);
       }).toList(),
       onSelected: (value) => setState(() => _selectedType = value),
       // Personalización del estilo para que parezca un OutlinedBorder
@@ -168,7 +125,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Nou Pokémon', style: theme.textTheme.titleLarge),
+        Text('Nova Tropa', style: theme.textTheme.titleLarge),
         const SizedBox(height: 12),
         Form(
           key: _formKey,
@@ -176,55 +133,75 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // *** ID ***
-              _buildField(
+              buildField(
                 key: FieldsInForm.id.key,
                 label: FieldsInForm.id.label,
                 hint: _controller.getHintId(),
                 validator: _controller.validateId,
+                formData: _formData,
+                numericOnly: true
               ),
-              _buildSpacerBetweenFields(),
+              buildSpacer(),
               // *** NOM ***
-              _buildField(
+              buildField(
                 key: FieldsInForm.name.key,
                 label: FieldsInForm.name.label,
                 hint: _controller.getHintName(),
                 validator: _controller.validateName,
+                formData: _formData
               ),
-              _buildSpacerBetweenFields(space:40),
+              buildSpacer(),
               // *** TIPUS ***
               _buildDropdownMenuTipus(),
-              _buildSpacerBetweenFields(space:40),
+              buildSpacer(),
+
+              // *** NIVELL ***
+              buildField(
+                key: FieldsInForm.level.key,
+                label: FieldsInForm.level.label,
+                hint: _controller.getHintLevel(),
+                validator: _controller.validateLevel,   
+                formData: _formData,     
+                numericOnly: true
+              ),
+              buildSpacer(),
 
               // *** VIDA ***
-              _buildField(
-                key: FieldsInForm.hp.key,
-                label: FieldsInForm.hp.label,
-                hint: _controller.getHintHp(),
-                validator: _controller.validateHp,
+              buildField(
+                key: FieldsInForm.life.key,
+                label: FieldsInForm.life.label,
+                hint: _controller.getHintLife(),
+                validator: _controller.validateLife,   
+                formData: _formData,     
+                numericOnly: true
               ),
-              _buildSpacerBetweenFields(),
+              buildSpacer(),
 
               // *** ATAC ***
-              _buildField(
-                key: FieldsInForm.attack.key,
-                label: FieldsInForm.attack.label,
-                hint: _controller.getHintAttack(),
-                validator: _controller.validateAttack,
+              buildField(
+                key: FieldsInForm.damage.key,
+                label: FieldsInForm.damage.label,
+                hint: _controller.getHintDamage(),
+                validator: _controller.validateDamage,   
+                formData : _formData,     
+                numericOnly: true
               ),
-              _buildSpacerBetweenFields(),
+              buildSpacer(),
 
-              // *** DEFENSA ***
-              _buildField(
-                key: FieldsInForm.defense.key,
-                label: FieldsInForm.defense.label,
-                hint: _controller.getHintDefense(),
-                validator: _controller.validateDefense,
+              // *** RANGE ***
+              buildField(
+                key: FieldsInForm.range.key,
+                label: FieldsInForm.range.label,
+                hint: _controller.getHintRange(),
+                validator: _controller.validateRange,      
+                formData: _formData,  
+                numericOnly: true
               ),
-              _buildSpacerBetweenFields(),
+              buildSpacer(),
 
               // *** BOTONS D'IMATGE ***
               Text(FieldsInForm.image.label, style: theme.textTheme.titleSmall),
-              _buildSpacerBetweenFields(),
+              buildSpacer(space: 8),
               Row(
                 children: [
                   Expanded(
@@ -244,7 +221,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
                   ),
                 ],
               ),
-              _buildSpacerBetweenFields(),
+              buildSpacer(),
 
               // *** MOSTRA LA IMATGE TRIADA ***
               AnimatedContainer(
@@ -301,7 +278,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
                     ),
                   ),
                 ),
-              _buildSpacerBetweenFields(),
+              buildSpacer(),
 
               // *** BOTÓ GUARDAR ***
               FilledButton.icon(
@@ -316,21 +293,21 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
     );
   }
 
-  Widget _buildPokemonList(ThemeData theme) {
-    final pokemons = _controller.tropa;
+  Widget _buildTroopList(ThemeData theme) {
+    final troops = _controller.tropes;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Pokémons guardats (${pokemons.length})',
+          'Tropes creades (${troops.length})',
           style: theme.textTheme.titleLarge,
         ),
         const SizedBox(height: 8),
-        if (pokemons.isEmpty)
+        if (troops.isEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24),
             child: Text(
-              'Encara no hi ha cap Pokémon guardat.',
+              'Encara no hi ha cap tropa guardada.',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
@@ -338,7 +315,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
             ),
           )
         else
-          for (final pokemon in pokemons) PokemonCard(pokemon: pokemon),
+        for (final tropa in troops) TroopCard(troop: tropa),
       ],
     );
   }
@@ -349,12 +326,16 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('LA MEVA Admin')),
+      appBar: AppBar(title: const Text('Tropes creades')),
       body: LayoutBuilder(
         builder: (context, constraints) {
+
+          //Fa un doble disseny en funció de si está apaisat (isWide=true) o no
           final isWide = constraints.maxWidth >= _wideBreakpoint;
 
           if (isWide) {
+            // **** DISSENY LANDSCAPE ****
+            //Una fila amb _buildForm i a la dreta _buildList 
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -368,19 +349,21 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.all(24),
-                    children: [_buildPokemonList(theme)],
+                    children: [_buildTroopList(theme)],
                   ),
                 ),
               ],
             );
           }
 
+          // **** DISSENY PORTRAIT ****
+          //Una ListView amb _buildForm i a sota _buildList 
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
               _buildForm(theme),
               const SizedBox(height: 24),
-              _buildPokemonList(theme),
+              _buildTroopList(theme),
             ],
           );
         },
