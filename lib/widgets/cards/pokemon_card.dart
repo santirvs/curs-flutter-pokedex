@@ -72,6 +72,7 @@ class PokemonCard extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
+            
             ClipRRect(borderRadius: BorderRadius.circular(8), child: thumbnail),
             const SizedBox(width: 12),
             Expanded(

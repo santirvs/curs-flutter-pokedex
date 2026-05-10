@@ -38,9 +38,10 @@ Widget _troopThumbnailImage({
 }
 
 class TroopCard extends StatelessWidget {
-  const TroopCard({super.key, required this.troop});
+  const TroopCard({super.key, required this.troop,  this.official=false});
 
   final Troop troop;
+  final bool official;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +77,23 @@ class TroopCard extends StatelessWidget {
         child: Row(
           children: [
             // Imagen de la tropa
-            ClipRRect(borderRadius: BorderRadius.circular(8), child: thumbnail),
+                official ? 
+                //Imatge de tropa oficial
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    troop.imageUrl!,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.contain,
+                    // Evita errores si la imagen aún no existe
+                    errorBuilder: (context, error, stackTrace) => 
+                        const Icon(Icons.person, size: 80),
+                  ),
+                ) :
+                // Imatge de tropa afegida
+                ClipRRect(borderRadius: BorderRadius.circular(8), child: thumbnail),
+
             const SizedBox(width: 16),
             // Información detallada
             Expanded(

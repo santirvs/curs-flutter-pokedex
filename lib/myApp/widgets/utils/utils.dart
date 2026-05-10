@@ -21,30 +21,43 @@ import 'package:flutter/services.dart';
   }
 
  //Widget que mostra un camp de text amb validació i actualitza el mapa formData
-  Widget buildField({
-    required String key,
-    required String label,
-    required String hint,
-    required String? Function(String?) validator,
-    required Map<String,String> formData,
-    bool numericOnly = false,
-  }) {
-    return TextFormField(
-      keyboardType: numericOnly? TextInputType.number : null,
-      inputFormatters: numericOnly? [FilteringTextInputFormatter.digitsOnly] : null,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        hintStyle: const TextStyle(
-          color: Colors.grey, // O Colors.black38 para un gris suave
-          fontSize: 14,
-        ),
-        border: const OutlineInputBorder(),
+Widget buildField({
+  required String key,
+  required String label,
+  required String hint,
+  required String? Function(String?) validator,
+  required Map<String, String> formData,
+  bool numericOnly = false,
+  bool allowDecimal = false, // 1. Nueva propiedad opcional
+}) {
+  return TextFormField(
+    // 2. Ajustamos el teclado para permitir el punto decimal
+    keyboardType: numericOnly 
+        ? TextInputType.numberWithOptions(decimal: allowDecimal) 
+        : null,
+    
+    // 3. Cambiamos el formateador para permitir puntos o comas
+    inputFormatters: numericOnly 
+        ? [
+            FilteringTextInputFormatter.allow(
+              RegExp(allowDecimal ? r'[0-9.,]' : r'[0-9]'),
+            ),
+          ] 
+        : null,
+    
+    decoration: InputDecoration(
+      labelText: label,
+      hintText: hint,
+      hintStyle: const TextStyle(
+        color: Colors.grey,
+        fontSize: 14,
       ),
-      validator: validator,
-      onSaved: (value) => formData[key] = value ?? '',
-    );
-  }
+      border: const OutlineInputBorder(),
+    ),
+    validator: validator,
+    onSaved: (value) => formData[key] = value ?? '',
+  );
+}
 
   //Widged que deixa un espai de separació entre dos camps del formulari, per defecte 12
   Widget buildSpacer( {double space = 12}) {

@@ -72,7 +72,7 @@ class Troop {
         damage: json['damage'] as int,
         range: json['range'] as double,
         imageUrl: json['imageUrl'] as String?,
-        type: json['movement'] as TroopType
+        type: TroopType.values.byName(json['type'] as String),
       );
 
   final int id;
@@ -92,6 +92,6 @@ class Troop {
         'damage': damage,
         'range': range,
         'imageUrl': imageUrl,
-        'movement' : type.name,
+        'type' : type.name,
       };
 }

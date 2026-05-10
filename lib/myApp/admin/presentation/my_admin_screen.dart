@@ -195,7 +195,8 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
                 hint: _controller.getHintRange(),
                 validator: _controller.validateRange,      
                 formData: _formData,  
-                numericOnly: true
+                numericOnly: true,
+                allowDecimal: true
               ),
               buildSpacer(),
 

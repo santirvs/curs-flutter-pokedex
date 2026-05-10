@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../myApp/admin/domain/pokemon_model.dart';
 import '../../../myApp/admin/domain/troop_model.dart';
 
 const _kAdminTroops = 'admin_troops';
@@ -17,7 +15,7 @@ enum FieldsInForm {
   life('life','Vida', 'Int', 1, 10000,""),
   damage('damage','Atac','Int',1, 3000,""),
   range('range','Rang','Double',0, 10,""),
-  image('image','Imatge', 'NotNull',0,0, "Tria una imatge"),
+  image('imageUrl','Imatge', 'NotNull',0,0, "Tria una imatge"),
   ;
 
   final String key;
@@ -66,31 +64,6 @@ class AdminScreenController {
     final encoded = tropes.map((p) => jsonEncode(p.toJson())).toList();
     await _prefs.setStringList(_kAdminTroops, encoded);
   }
-
-  Pokemon createPokemon({
-    required String id,
-    required String name,
-    required TroopType type,
-    required String hp,
-    required String attack,
-    required String defense,
-    required Uint8List imageBytes,
-    required String? mimeType,
-  }) {
-    final mime = mimeType ?? 'image/jpeg';
-    final imageUrl = 'data:$mime;base64,${base64Encode(imageBytes)}';
-
-    return Pokemon(
-      id: int.parse(id.trim()),
-      name: name.trim(),
-      type: type,
-      hp: int.parse(hp.trim()),
-      attack: int.parse(attack.trim()),
-      defense: int.parse(defense.trim()),
-      imageUrl: imageUrl,
-    );
-  }
-
 
  Troop createTroop({
     required String id,
