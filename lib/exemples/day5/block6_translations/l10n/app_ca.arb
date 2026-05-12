@@ -1,0 +1,21 @@
+{
+  "@@locale": "ca",
+  "appBarTitle": "Traduccions · Flutter natiu",
+  "welcome": "Benvingut/da al curs de Flutter!",
+  "greeting": "Hola, {name}!",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "itemsCount": "{count, plural, zero{No hi ha elements} one{Hi ha 1 element} other{Hi ha {count} elements}}",
+  "@itemsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

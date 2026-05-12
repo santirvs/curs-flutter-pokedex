@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/myApp/list/data/troop_repository.dart';
+import 'package:my_pokedex/myApp/list/data/troop_repository.dart';
 
 import '../../widgets/cards/troop_card.dart';
 

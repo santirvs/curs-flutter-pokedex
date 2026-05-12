@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:pokedex/exemples/day3/widgets/block_hub.dart';
+import 'package:my_pokedex/exemples/day3/widgets/block_hub.dart';
 import 'adaptive_menus_screen.dart';
 import 'adaptive_navigation_shell_screen.dart';
 import 'media_query_inspector_screen.dart';

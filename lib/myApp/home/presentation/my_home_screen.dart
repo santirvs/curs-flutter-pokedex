@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/myApp/widgets/utils/utils.dart';
+import 'package:my_pokedex/myApp/widgets/utils/utils.dart';
 
 import '../../admin/presentation/my_admin_screen.dart';
 import '../../map/presentation/my_map_screen.dart';
-import '../../ranking/presentation/my_ranking_screen.dart';
+import '../../ranking/presentation/my_ranking_screen.dart'; // ignore: unused_import
+import '../../ranking/presentation/ranking_screen.dart';
 import '../../list/presentation/my_list.dart';
 
 class MyHomeScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> with WidgetsBindingObserver
   static const List<Widget> _destinations = [
     MyListScreen(),
     MyMapScreen(),
-    MyRankingScreen(),
+    RankingScreen(),
     MyAdminScreen(),
   ];
 

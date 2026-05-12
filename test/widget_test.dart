@@ -2,7 +2,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:pokedex/main.dart';
+import 'package:my_pokedex/main.dart';
 
 void main() {
   testWidgets('App boots and shows the title', (tester) async {

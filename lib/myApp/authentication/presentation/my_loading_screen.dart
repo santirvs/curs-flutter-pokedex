@@ -3,8 +3,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:pokedex/features/admin/presentation/admin_screen.dart';
-import 'package:pokedex/myApp/home/presentation/my_home_screen.dart';
+import 'package:my_pokedex/features/admin/presentation/admin_screen.dart';
+import 'package:my_pokedex/myApp/home/presentation/my_home_screen.dart';
 
 
 // Defineix uns estils amb el tipus de lletra

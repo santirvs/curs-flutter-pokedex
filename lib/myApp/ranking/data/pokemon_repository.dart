@@ -1,0 +1,153 @@
+import 'package:dio/dio.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../admin/domain/pokemon_model.dart';
+
+
+class PokemonRepository {
+  static const String _favKey = 'favorite_pokemon_ids';
+
+  PokemonRepository();
+
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: 'https://pokeapi.co/api/v2/',
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+    ),
+  );
+
+  Future<List<Pokemon>> fetchPokemonPage({
+    required int limit,
+    required int offset,
+  }) async {
+    final listRes = await _dio.get(
+      '/pokemon',
+      queryParameters: {'limit': limit, 'offset': offset},
+    );
+
+    if (listRes.statusCode != 200 || listRes.data == null) {
+      throw DioException(
+        requestOptions: listRes.requestOptions,
+        message: 'Resposta de llista invàlida (${listRes.statusCode})',
+      );
+    }
+
+    final body = listRes.data!;
+    final results = body['results'] as List<dynamic>;
+
+    if (results.isEmpty) {
+      return const [];
+    }
+
+    final detailFutures = results.map((e) async {
+      final url = (e as Map<String, dynamic>)['url'] as String;
+      final detailRes = await _dio.get(url);
+      final data = detailRes.data;
+      if (data == null) {
+        throw DioException(
+          requestOptions: detailRes.requestOptions,
+          message: 'Fitxa buida',
+        );
+      }
+      return _pokemonFromPokeApiDetail(data);
+    });
+
+    return Future.wait(detailFutures);
+  }
+
+  void close() => _dio.close();
+
+  Future<Pokemon> _pokemonFromPokeApiDetail(Map<String, dynamic> json) async {
+    final nameRaw = json['name'] as String;
+    final displayName = _formatPokemonName(nameRaw);
+
+    int stat(String key) {
+      for (final item in json['stats'] as List<dynamic>) {
+        final m = item as Map<String, dynamic>;
+        final statMap = m['stat'] as Map<String, dynamic>;
+        if (statMap['name'] == key) {
+          return (m['base_stat'] as num).toInt();
+        }
+      }
+      return 0;
+    }
+
+    final types = List<Map<String, dynamic>>.from(
+      (json['types'] as List<dynamic>).cast<Map<String, dynamic>>(),
+    )..sort((a, b) => (a['slot'] as int).compareTo(b['slot'] as int));
+
+    final typeName =
+        (types.first['type'] as Map<String, dynamic>)['name'] as String;
+
+    final sprites = json['sprites'] as Map<String, dynamic>?;
+    String? imageUrl;
+    if (sprites != null) {
+      final other = sprites['other'] as Map<String, dynamic>?;
+      final artwork = other?['official-artwork'] as Map<String, dynamic>?;
+      imageUrl =
+          artwork?['front_default'] as String? ??
+          sprites['front_default'] as String?;
+    }
+
+    final id = (json['id'] as num).toInt();
+    // Esperamos a que SharedPreferences nos diga si es favorito
+    final isFavorite = await checkFavorite(id);
+
+    return Pokemon(
+      id: (json['id'] as num).toInt(),
+      name: displayName,
+      type: PokemonType.fromPokeApiName(typeName),
+      hp: stat('hp'),
+      attack: stat('attack'),
+      defense: stat('defense'),
+      imageUrl: imageUrl,
+      favorite: isFavorite,
+    );
+  }
+
+  String _formatPokemonName(String slug) {
+    return slug
+        .split('-')
+        .map(
+          (w) => w.isEmpty
+              ? w
+              : '${w[0].toUpperCase()}${w.substring(1).toLowerCase()}',
+        )
+        .join(' ');
+  }
+
+  // Cambiamos a Future<bool> porque la lectura es asíncrona
+  Future<bool> checkFavorite(int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    // Supongamos que guardamos los IDs favoritos en una lista de Strings
+    final List<String> favorites =
+        prefs.getStringList(_favKey) ?? [];
+
+    return favorites.contains(id.toString());
+  }
+
+static Future<void> toggleFavorite(int id) async {
+  final prefs = await SharedPreferences.getInstance();
+  
+  // 1. Obtenemos la lista actual (o una vacía si no existe)
+  // IMPORTANTE: .getStringList devuelve una lista inmutable en algunas versiones, 
+  // por eso usamos List<String>.from() para poder modificarla.
+  final List<String> favorites = List<String>.from(prefs.getStringList(_favKey) ?? []);
+  
+  final String idStr = id.toString();
+
+  // 2. Lógica de añadir o quitar
+  if (favorites.contains(idStr)) {
+    favorites.remove(idStr);
+    //print('Pokémon $id eliminado de favoritos');
+  } else {
+    favorites.add(idStr);
+    //print('Pokémon $id añadido a favoritos');
+  }
+
+  // 3. Guardamos la lista actualizada
+  await prefs.setStringList(_favKey, favorites);
+}
+
+}

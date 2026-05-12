@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../widgets/cards/pokemon_card.dart';
-import '../domain/pokemon_model.dart';
+import '../../admin/domain/pokemon_model.dart';
 import 'admin_screen_controller.dart';
 
 class AdminScreen extends StatefulWidget {

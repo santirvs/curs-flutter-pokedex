@@ -1,0 +1,7 @@
+{
+  "@@locale": "en",
+  "appBarTitle": "Translations · Vanilla Flutter",
+  "welcome": "Welcome to the Flutter course!",
+  "greeting": "Hello, {name}!",
+  "itemsCount": "{count, plural, zero{No items} one{1 item} other{{count} items}}"
+}

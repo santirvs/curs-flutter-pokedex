@@ -32,6 +32,26 @@
  - *** FALTA PERMETRE NÚMEROS DECIMALS PEL RANG  --> TextInputType.numberWithOptions(decimal: allowDecimal)
  - Unificada la Card de la llista oficial i la llista de creats
 
+## 11/05
+ - Començo a adaptar la crida a la API
+ - Descarto fer servir https://developer.clashofclans.com/ degut a limitacions per IP
+ - Canvio nom de l'aplicació a MyAppFlutter 
+
+## 12/05
+ - Incorporo el contingut d'exemples/day5 al projecte
+ - Actualitzo el pubspec.yaml amb totes les noves depedències del dia 5
+ - Canvio el name de pokedex a my_pokedex al pubspec.yaml --> Això em costa haver d'adaptar tots els imports que fan referència a pokedex i canviar-los per my_pokedex
+ - Afegeixo la funcionalitat de la pantalla de rànking (API Pokemon)
+ - Afegeixo la funcionalitat de marcar favorits
+   - Canvio la card i afegeixo l'icona del cor
+   - Canvio el pokemon_model i li afegeixo una propietat booleana favorit
+   - Regenero el pokemon_model amb  >> dart run build_runner build --delete-conflicting-outputs
+   - Afegeixo el favorite al constructor del Pokemon_repository
+   - Informo el favorite segons si el ID existieix a una llista que es manté a SharedPreferences
+   - Genero un mètode ToggleFavorite al pokemon_repositori del ranking
+   - El principal problema l'he tingut en recuperar els elements de dalt de la ListView ja que actualitzava la pantalla
+     i les preferències, però no els items de la ListView. Això, combinat amb el itemBuilder del ListView on cal indicar una key que combini id+favorit per tal que no reutilitzi una card antiga.
+
 
 
 

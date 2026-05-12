@@ -1,5 +1,5 @@
-name: pokedex
-description: "Pokédex app — Flutter course."
+name: my_pokedex
+description: "My Pokédex app — Flutter course."
 
 publish_to: 'none' 
 
@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.5.5
@@ -20,6 +22,19 @@ dependencies:
   json_annotation: ^4.11.0
   image_picker: ^1.2.2
 
+  # Dia 5 · Bloc 4 · State management
+  provider: ^6.1.5+1
+  flutter_riverpod: ^3.3.1
+  riverpod_annotation: ^4.0.2
+
+  # Dia 5 · Bloc 5 · Navegació
+  auto_route: ^11.1.0
+
+  # Dia 5 · Bloc 6 · Traduccions
+  intl: ^0.20.2
+  slang: ^4.14.0
+  slang_flutter: ^4.14.0
+
 dev_dependencies: 
   flutter_test:
     sdk: flutter
@@ -27,9 +42,29 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.15.0
   freezed: ^3.2.5
-  json_serializable: ^6.13.2
+  # json_serializable es queda a 6.13.x (sense pujar a 6.13.1+) perquè
+  # riverpod_generator 4.x encara fixa analyzer ^9.0.0.
+  json_serializable: ^6.13.0
+
+
+  # Codegen del Bloc 4 (riverpod) i Bloc 5 (auto_route).
+  # Mantenim auto_route_generator a 10.4.x perquè riverpod_generator 4.x
+  # encara fixa analyzer ^9.0.0 (10.5 ja exigeix analyzer >=9 <11 + dart_style 3.1.5).
+  #
+  # Slang queda fora del `build_runner` perquè `slang_build_runner` v4.13+
+  # té un bug obert (slang #351, "Asset already exists") i, a més, requereix
+  # duplicar la config a `build.yaml`. Generem amb `dart run slang` (config a
+  # `slang.yaml`).
+  riverpod_generator: ^4.0.3
+  auto_route_generator: ^10.4.0
+
+# Nota: la configuració de `slang` viu a `build.yaml` perquè ni `slang_build_runner`
+# ni la CLI (`dart run slang`) llegeixen el `pubspec.yaml`. La fem servir per
+# fixar l'`input_directory` i `lazy: false` (sense això un `setLocaleSync` de
+# locale no-base llança `_DeferredNotLoadedError`).
 
 flutter:
+  generate: true
 
   uses-material-design: true
 

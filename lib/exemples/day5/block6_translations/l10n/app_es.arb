@@ -1,0 +1,7 @@
+{
+  "@@locale": "es",
+  "appBarTitle": "Traducciones · Flutter nativo",
+  "welcome": "¡Bienvenido/a al curso de Flutter!",
+  "greeting": "¡Hola, {name}!",
+  "itemsCount": "{count, plural, zero{No hay elementos} one{Hay 1 elemento} other{Hay {count} elementos}}"
+}

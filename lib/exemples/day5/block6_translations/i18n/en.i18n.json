@@ -1,0 +1,10 @@
+{
+  "appBarTitle": "Translations · Slang",
+  "welcome": "Welcome to the Flutter course!",
+  "greeting(name)": "Hello, ${name}!",
+  "itemsCount(n)": {
+    "zero": "No items",
+    "one": "1 item",
+    "other": "${n} items"
+  }
+}

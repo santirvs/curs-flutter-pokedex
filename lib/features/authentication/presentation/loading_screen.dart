@@ -3,8 +3,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:pokedex/features/admin/presentation/admin_screen.dart';
-import 'package:pokedex/features/home/presentation/home_screen.dart';
+import 'package:my_pokedex/features/admin/presentation/admin_screen.dart';
+import 'package:my_pokedex/features/home/presentation/home_screen.dart';
 
 import 'loading_screen_controller.dart';
 
