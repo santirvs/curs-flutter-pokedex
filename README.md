@@ -21,8 +21,10 @@
  - *** Falla al guardar, no dóna cap error, però no guarda res
  
 ## 10/05
- - Corregit que aparegui el teclat numèric només si es demanen números. S'ha afegit un paràmetre numericOnly al _buildField que assigni null en cas que no sigui numeric als atributs keyboardType e inputFormatters
- - Corregit el guardar. Hi havia conflicte entre el camp buscat "id" i el configurat "Id"
+ - Corregit que aparegui el teclat numèric només si es demanen números.
+   - S'ha afegit un paràmetre numericOnly al _buildField que assigni null en cas que no sigui numeric als atributs keyboardType e inputFormatters
+ - Corregit el guardar.
+   - Hi havia conflicte entre el camp buscat "id" i el configurat "Id"
  - Creada una llibreria d'utilitats a widgets/utils/utils.dart per poder ser reaprofitades
     - ShowCustomDialog()
     - buildSpacer()
