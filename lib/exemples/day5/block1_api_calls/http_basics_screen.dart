@@ -57,7 +57,6 @@ class PostsRepository {
 
   Future<String> getPostTitle() async {
     final response = await http.get(_postOne);
-
     if (response.statusCode != 200) {
       throw Exception('HTTP ${response.statusCode}');
     }

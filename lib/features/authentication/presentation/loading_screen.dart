@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:my_pokedex/features/admin/presentation/admin_screen.dart';
-import 'package:my_pokedex/features/home/presentation/home_screen.dart';
+import 'package:my_pokedex/core/router/app_router.dart';
 
 import 'loading_screen_controller.dart';
 
@@ -22,22 +22,17 @@ const _tipStyle = TextStyle(
   color: Color(0xFFB0BEC5),
 );
 
-Widget _defaultNextScreen(BuildContext context) =>
-    kIsWeb ? const AdminScreen() : const HomeScreen();
-
+@RoutePage()
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({
     super.key,
     this.minimumDisplayDuration = Duration.zero,
     this.readiness,
-    this.nextScreenBuilder = _defaultNextScreen,
   });
 
   final Duration minimumDisplayDuration;
 
   final Future<void>? readiness;
-
-  final WidgetBuilder nextScreenBuilder;
 
   @override
   State<LoadingScreen> createState() => _LoadingScreenState();
@@ -83,9 +78,7 @@ class _LoadingScreenState extends State<LoadingScreen>
     if (skipAnimation) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute<void>(builder: widget.nextScreenBuilder),
-        );
+        _replaceWithMain(context);
       });
       return;
     }
@@ -118,9 +111,15 @@ class _LoadingScreenState extends State<LoadingScreen>
     );
     if (!mounted) return;
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: widget.nextScreenBuilder),
-    );
+    _replaceWithMain(context);
+  }
+
+  void _replaceWithMain(BuildContext context) {
+    if (kIsWeb) {
+      context.router.replace(const AdminRoute());
+    } else {
+      context.router.replace(const HomeRoute());
+    }
   }
 
   @override

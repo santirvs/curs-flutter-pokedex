@@ -1,3 +1,8 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'pokemon_model.freezed.dart';
+part 'pokemon_model.g.dart';
+
 enum PokemonType {
   normal('Normal'),
   fire('Foc'),
@@ -21,45 +26,28 @@ enum PokemonType {
   const PokemonType(this.label);
 
   final String label;
+
+  static PokemonType fromPokeApiName(String name) {
+    try {
+      return PokemonType.values.byName(name);
+    } on ArgumentError {
+      return PokemonType.normal;
+    }
+  }
 }
 
-class Pokemon {
-  const Pokemon({
-    required this.id,
-    required this.name,
-    required this.type,
-    required this.hp,
-    required this.attack,
-    required this.defense,
-    this.imageUrl,
-  });
+@freezed
+abstract class Pokemon with _$Pokemon {
+  const factory Pokemon({
+    required int id,
+    required String name,
+    required PokemonType type,
+    required int hp,
+    required int attack,
+    required int defense,
+    String? imageUrl,
+  }) = _Pokemon;
 
-  factory Pokemon.fromJson(Map<String, dynamic> json) => Pokemon(
-        id: json['id'] as int,
-        name: json['name'] as String,
-        type: PokemonType.values.byName(json['type'] as String),
-        hp: json['hp'] as int,
-        attack: json['attack'] as int,
-        defense: json['defense'] as int,
-        imageUrl: json['imageUrl'] as String?,
-      );
-
-  final int id;
-  final String name;
-  final PokemonType type;
-  final int hp;
-  final int attack;
-  final int defense;
-
-  final String? imageUrl;
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'type': type.name,
-        'hp': hp,
-        'attack': attack,
-        'defense': defense,
-        'imageUrl': imageUrl,
-      };
+  factory Pokemon.fromJson(Map<String, dynamic> json) =>
+      _$PokemonFromJson(json);
 }

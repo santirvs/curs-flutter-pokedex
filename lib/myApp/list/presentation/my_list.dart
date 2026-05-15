@@ -10,7 +10,9 @@ class MyListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      // Barra superior con el título
+      // Barra superior con el título 
+
+      /* Ara es gestiona a la home screen
       appBar: AppBar(
         title: const Text(
           'Llista de tropes oficials',
@@ -24,6 +26,7 @@ class MyListScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
+      */
       // El cuerpo es el ListView que creamos antes
       body: const TroopListView(),
     );

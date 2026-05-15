@@ -3,10 +3,13 @@ import 'package:my_pokedex/myApp/widgets/utils/utils.dart';
 
 import '../../admin/presentation/my_admin_screen.dart';
 import '../../map/presentation/my_map_screen.dart';
-import '../../ranking/presentation/my_ranking_screen.dart'; // ignore: unused_import
 import '../../ranking/presentation/ranking_screen.dart';
 import '../../list/presentation/my_list.dart';
+import '../../../core/router/app_router.dart';
 
+import 'package:auto_route/auto_route.dart'; // No olvides este import
+
+@RoutePage()
 class MyHomeScreen extends StatefulWidget {
   const MyHomeScreen({super.key});
 
@@ -56,7 +59,20 @@ class _MyHomeScreenState extends State<MyHomeScreen> with WidgetsBindingObserver
 
   @override
   Widget build(BuildContext context) {
+    //final t = context;
+    final titles = ["Llista de tropes oficials", "El meu mapa", "El meu Rànking","Tropes creades"];
+
     return Scaffold(
+        appBar: AppBar(
+        title: Text(titles[_currentIndex]),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: "Settings",
+            onPressed: () => context.router.push(const SettingsRoute()),
+          ),
+        ],
+      ),
       body: IndexedStack(index: _currentIndex, children: _destinations),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,

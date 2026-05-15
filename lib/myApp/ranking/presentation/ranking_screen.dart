@@ -114,7 +114,7 @@ class _RankingScreenState extends State<RankingScreen> {
 
   Widget buildListView(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ranking')),
+      //appBar: AppBar(title: const Text('Ranking')),
       body: RefreshIndicator(
         onRefresh: _refresh,
         child: ListView.builder(

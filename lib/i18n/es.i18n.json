@@ -1,0 +1,16 @@
+{
+  "settingsTitle": "Configuración",
+  "appearance": "Apariencia",
+  "themeLight": "Claro",
+  "themeDark": "Oscuro",
+  "language": "Idioma",
+  "languageCatalan": "Catalán",
+  "languageSpanish": "Castellano",
+  "homeMap": "Mapa",
+  "homeRanking": "Ranking",
+  "homeAdmin": "Admin",
+  "settingsTooltip": "Configuración",
+  "welcomeBackTitle": "Bienvenido de nuevo",
+  "welcomeBackBody": "Nos alegra volver a verte.",
+  "ok": "De acuerdo"
+}

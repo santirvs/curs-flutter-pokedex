@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:my_pokedex/features/admin/presentation/admin_screen.dart';
 import 'package:my_pokedex/myApp/home/presentation/my_home_screen.dart';
 
+import 'package:auto_route/auto_route.dart'; // No olvides este import
+import 'package:my_pokedex/core/router/app_router.dart';
 
 // Defineix uns estils amb el tipus de lletra
 /*
@@ -40,15 +42,16 @@ const _tipStyle = TextStyle(
 );
 
 // Decideix quina serà la propera pantalla:  "Home" en mòbil i restringida a "Admin" si estem en web
-Widget _defaultNextScreen(BuildContext context) =>
+Widget defaultNextScreen(BuildContext context) =>
     kIsWeb ? const AdminScreen() : const MyHomeScreen();
 
+@RoutePage() // <--- ¡ESTO ES CLAVE!
 class MyLoadingScreen extends StatefulWidget {
   const MyLoadingScreen({
     super.key,
     this.minimumDisplayDuration = const Duration(milliseconds: 3000),
     this.readiness,
-    this.nextScreenBuilder = _defaultNextScreen,
+    this.nextScreenBuilder = defaultNextScreen,
   });
 
   final Duration minimumDisplayDuration;
@@ -110,9 +113,11 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
     if (skipAnimation) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute<void>(builder: widget.nextScreenBuilder),
-        );
+        //Navegació antiga
+        //Navigator.of(context).pushReplacement(
+        //  MaterialPageRoute<void>(builder: widget.nextScreenBuilder),
+        //);
+        context.router.replace(const MyHomeRoute());
       });
       return;
     }
@@ -138,9 +143,11 @@ class _MyLoadingScreenState extends State<MyLoadingScreen>
 
     if (!mounted) return;
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: widget.nextScreenBuilder),
-    );
+//  Navegació antiga
+//    Navigator.of(context).pushReplacement(
+//      MaterialPageRoute<void>(builder: widget.nextScreenBuilder),
+ //   );
+    context.router.replace(const MyHomeRoute());
   }
 
   @override

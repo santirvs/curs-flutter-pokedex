@@ -1,11 +1,13 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../widgets/cards/pokemon_card.dart';
-import '../../admin/domain/pokemon_model.dart';
+import '../domain/pokemon_model.dart';
 import 'admin_screen_controller.dart';
 
+@RoutePage()
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
 
@@ -37,7 +39,23 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final file = await _imagePicker.pickImage(source: source);
+    final XFile? file;
+    try {
+      file = await _imagePicker.pickImage(source: source);
+    } on PlatformException catch (e) {
+      if (!mounted) return;
+      final message = switch (e.code) {
+        'camera_access_denied' =>
+          'S’ha denegat l’accés a la càmera. Pots activar-lo als ajustos de l’app.',
+        'photo_access_denied' =>
+          'S’ha denegat l’accés a la fototeca. Pots activar-lo als ajustos de l’app.',
+        _ => 'No s’ha pogut obrir la imatge (${e.code}).',
+      };
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+      return;
+    }
     if (!mounted || file == null) return;
 
     final bytes = await file.readAsBytes();
@@ -314,43 +332,42 @@ class _AdminScreenState extends State<AdminScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Admin')),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWide = constraints.maxWidth >= _wideBreakpoint;
+    final body = LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth >= _wideBreakpoint;
 
-          if (isWide) {
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(24),
-                    children: [_buildForm(theme)],
-                  ),
-                ),
-                const VerticalDivider(width: 1),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(24),
-                    children: [_buildPokemonList(theme)],
-                  ),
-                ),
-              ],
-            );
-          }
-
-          return ListView(
-            padding: const EdgeInsets.all(16),
+        if (isWide) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildForm(theme),
-              const SizedBox(height: 24),
-              _buildPokemonList(theme),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(24),
+                  children: [_buildForm(theme)],
+                ),
+              ),
+              const VerticalDivider(width: 1),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(24),
+                  children: [_buildPokemonList(theme)],
+                ),
+              ),
             ],
           );
-        },
-      ),
+        }
+
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _buildForm(theme),
+            const SizedBox(height: 24),
+            _buildPokemonList(theme),
+          ],
+        );
+      },
     );
+
+    return body;
   }
 }

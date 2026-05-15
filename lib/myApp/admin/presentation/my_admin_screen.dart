@@ -327,7 +327,7 @@ class _MyAdminScreenState extends State<MyAdminScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Tropes creades')),
+      //appBar: AppBar(title: const Text('Tropes creades')),
       body: LayoutBuilder(
         builder: (context, constraints) {
 

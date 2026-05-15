@@ -1,0 +1,16 @@
+{
+  "settingsTitle": "Configuració",
+  "appearance": "Aparença",
+  "themeLight": "Clar",
+  "themeDark": "Fosc",
+  "language": "Idioma",
+  "languageCatalan": "Català",
+  "languageSpanish": "Castellà",
+  "homeMap": "Mapa",
+  "homeRanking": "Ranking",
+  "homeAdmin": "Admin",
+  "settingsTooltip": "Configuració",
+  "welcomeBackTitle": "Benvingut de nou",
+  "welcomeBackBody": "Ens alegra tornar-te a veure.",
+  "ok": "D'acord"
+}

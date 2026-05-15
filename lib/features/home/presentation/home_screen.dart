@@ -1,9 +1,13 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:my_pokedex/core/router/app_router.dart';
+import 'package:my_pokedex/i18n/strings.g.dart';
 
 import '../../admin/presentation/admin_screen.dart';
 import '../../map/presentation/map_screen.dart';
 import '../../ranking/presentation/ranking_screen.dart';
 
+@RoutePage()
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -18,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     AdminScreen(),
   ];
 
-  int _currentIndex = 2;
+  int _currentIndex = 0;
   bool _wasInBackground = false;
 
   @override
@@ -45,15 +49,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   void _showWelcomeBackDialog() {
     if (!mounted) return;
+    final t = context.t;
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Benvingut de nou'),
-        content: const Text('Ens alegra tornar-te a veure.'),
+        title: Text(t.welcomeBackTitle),
+        content: Text(t.welcomeBackBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('D\'acord'),
+            child: Text(t.ok),
           ),
         ],
       ),
@@ -62,28 +67,41 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
+    final titles = [t.homeMap, t.homeRanking, t.homeAdmin];
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text(titles[_currentIndex]),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: t.settingsTooltip,
+            onPressed: () => context.router.push(const SettingsRoute()),
+          ),
+        ],
+      ),
       body: IndexedStack(index: _currentIndex, children: _destinations),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) {
           setState(() => _currentIndex = index);
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.map_outlined),
-            selectedIcon: Icon(Icons.map),
-            label: 'Mapa',
+            icon: const Icon(Icons.map_outlined),
+            selectedIcon: const Icon(Icons.map),
+            label: t.homeMap,
           ),
           NavigationDestination(
-            icon: Icon(Icons.leaderboard_outlined),
-            selectedIcon: Icon(Icons.leaderboard),
-            label: 'Ranking',
+            icon: const Icon(Icons.leaderboard_outlined),
+            selectedIcon: const Icon(Icons.leaderboard),
+            label: t.homeRanking,
           ),
           NavigationDestination(
-            icon: Icon(Icons.admin_panel_settings_outlined),
-            selectedIcon: Icon(Icons.admin_panel_settings),
-            label: 'Admin',
+            icon: const Icon(Icons.admin_panel_settings_outlined),
+            selectedIcon: const Icon(Icons.admin_panel_settings),
+            label: t.homeAdmin,
           ),
         ],
       ),

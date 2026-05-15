@@ -36,8 +36,8 @@
 
 ## 11/05
  - Començo a adaptar la crida a la API
- - Descarto fer servir https://developer.clashofclans.com/ degut a limitacions per IP
- - Canvio nom de l'aplicació a MyAppFlutter 
+ - Descarto fer servir https://developer.clashofclans.com/ degut a limitacions per IP i token
+ - Canvio nom de l'aplicació a MyAppFlutter
 
 ## 12/05
  - Incorporo el contingut d'exemples/day5 al projecte
@@ -54,6 +54,22 @@
    - El principal problema l'he tingut en recuperar els elements de dalt de la ListView ja que actualitzava la pantalla
      i les preferències, però no els items de la ListView. Això, combinat amb el itemBuilder del ListView on cal indicar una key que combini id+favorit per tal que no reutilitzi una card antiga.
 
+## 15/05
+ - Incorporo el contingut d'exemples/day6 al projecte
+ - Incorporo els canvis de l'App del dia 6 (Navigation, Traducció, ...) --> L'App es queda en blanc i no fa res!
+ - Elimino tot el lib i el torno a copiar des del dia 6 (em guardo MyApp)  -> Funciona!
+ - Miro de llençar la myApp (problema!!  al main.dart ja no es fa servir home:)
+    - Cal configurar els Screens amb @RoutePage i editar el fitxer de core/router/app_router
+ - Aconsegueixo iniciar my_home_sceeen, però si inicio amb my_loading_screen un cop acabat l'splash es queda tot en blanc.
+    - Hi ha barreja de navegacions. Actualitzo el my_loading_screen perque faci servir AutoRoute per passar a la següent pantalla
+ - Afegeixo els settings, funciona correctament!
+ - Se'm duplica el títol --> Elimino el títol de cada pantalla i el gestiono amb l'AppBar de l'Scaffold del home screen
+
+## AMPLIACIONS PENDENTS
+ - Settings: Canviar el tipus de lletra (CoC - Default)
+ - Traduir l'App a diferents idiomes
+ - Acabar d'adaptar-la a l'API de Clash Of Clans
+ - Fer un menú general de navegació per mostrar tant myApp, com la de Pokemon, com els 6 dies d'exemple
 
 
 
